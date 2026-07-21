@@ -2,12 +2,8 @@ import pandas as pd
 import yfinance as yf
 import numpy as np
 import json as js
+import matplotlib.pyplot as plt
 dat = yf.Ticker("TSLA")
-dat.info
-dat.calendar
-dat.analyst_price_targets
-dat.quarterly_income_stmt
-dat.option_chain(dat.options[0]).calls
 dat.quarterly_income_stmt.to_csv("quarterly_income_stmt.csv")
 history=dat.history(period="1y", interval="1d")
 history.to_csv("Historical data")
@@ -27,3 +23,13 @@ with open("history.json", "w") as file:
     js.dump(hist_data, file, indent=4)
 
 
+history["SMA_20"]=history["Close"].rolling(20).mean()
+history["SMA_50"]=history["Close"].rolling(50).mean()
+plt.figure(figsize = (10,10))
+plt.plot(history["SMA_20"])
+plt.plot(history["SMA_50"])
+plt.plot(history["Close"])
+plt.legend(["SMA_20", "SMA_50", "Close"])
+plt.xlabel("Days")
+plt.ylabel("Price")
+plt.show()
