@@ -2,14 +2,10 @@ import pandas as pd
 import yfinance as yf
 import numpy as np
 import json as js
+import matplotlib.pyplot as plt
 dat = yf.Ticker("TSLA")
-dat.info
-dat.calendar
-dat.analyst_price_targets
-dat.quarterly_income_stmt
-dat.option_chain(dat.options[0]).calls
-dat.quarterly_income_stmt.to_csv("quarterly_income_stmt.csv")
-history=dat.history(period="1y", interval="1d")
+
+history=dat.history(period="2y", interval="1d")
 history.to_csv("Historical data")
 
 hist_data={}
@@ -25,5 +21,32 @@ for data in dates:
     }
 with open("history.json", "w") as file:
     js.dump(hist_data, file, indent=4)
+
+short_window = 20
+long_window = 50
+
+history["MA_short"] = history["Close"].rolling(window=short_window).mean()
+history["MA_long"] = history["Close"].rolling(window=long_window).mean()
+
+
+signal_list = []
+prev_signal = 0
+
+for date in dates:
+    ma_short = history["MA_short"][date]
+    ma_long = history["MA_long"][date]
+    if pd.isna(ma_short) or pd.isna(ma_long):
+        current_signal = 0
+    elif ma_short > ma_long:
+        current_signal = 1
+    elif ma_short < ma_long:
+        current_signal = -1
+    else:
+        current_signal = 0
+
+    signal_list.append(current_signal)
+
+history["Signal"] = signal_list
+
 
 
