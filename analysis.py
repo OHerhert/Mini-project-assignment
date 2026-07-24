@@ -48,5 +48,35 @@ for date in dates:
 
 history["Signal"] = signal_list
 
+position_list = []
+buy_dates = []
+sell_dates = []
+buy_prices = []
+sell_prices = []
+
+prev_signal = None
+
+for date in dates:
+    current_signal = history["Signal"][date]
+
+    if prev_signal is None:
+        position = None
+    else:
+        position = current_signal - prev_signal
+
+    position_list.append(position)
+
+    if position == 2:
+        buy_dates.append(date)
+        buy_prices.append(history["Close"][date])
+
+    if position == -2:
+        sell_dates.append(date)
+        sell_prices.append(history["Close"][date])
+
+    prev_signal = current_signal
+
+history["Position"] = position_list
+
 
 
