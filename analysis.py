@@ -59,6 +59,7 @@ prev_signal = None
 for date in dates:
     current_signal = history["Signal"][date]
 
+
     if prev_signal is None:
         position = None
     else:
@@ -76,9 +77,15 @@ for date in dates:
 
     prev_signal = current_signal
 
-history["Position"] = position_list
+if sell_dates[0] < buy_dates[0]:
+    sell_dates = sell_dates[1:]
+    sell_prices = sell_prices[1:]
 
-
+pnl = 0
+trades = min(len(buy_prices), len(sell_prices))
+for i in range(trades):
+    pnl += sell_prices[i] - buy_prices[i]
+print(f"net profit: {pnl:.2f}")
 
 history["SMA_20"]=history["Close"].rolling(20).mean()
 history["SMA_50"]=history["Close"].rolling(50).mean()
