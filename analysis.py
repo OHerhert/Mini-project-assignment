@@ -80,3 +80,14 @@ history["Position"] = position_list
 
 
 
+history["SMA_20"]=history["Close"].rolling(20).mean()
+history["SMA_50"]=history["Close"].rolling(50).mean()
+
+plt.figure(figsize = (10,10))
+plt.plot(history["SMA_20"])
+plt.plot(history["SMA_50"])
+plt.plot(history["Close"])
+plt.legend(["SMA_20", "SMA_50", "Close"])
+plt.xlabel("Date")
+plt.ylabel("Price")
+plt.show()
